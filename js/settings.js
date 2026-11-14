@@ -59,7 +59,19 @@ export function createSettings(container, win) {
         <h2 class="settings-section-title">Account</h2>
         <div class="settings-group"><div class="settings-row-desc">Not signed in</div></div>
       `;
+
+      const $requirePw = $content.querySelector('#requirePwToggle');
+if ($requirePw) {
+  $requirePw.addEventListener('change', (e) => {
+    setSetting('requirePasswordOnStartup', e.target.checked);
+    toast.success(e.target.checked
+      ? 'WebOS will ask for password on startup'
+      : 'Auto-login enabled');
+  });
+}
       return;
+
+      
     }
 
     const initial   = user.username.charAt(0).toUpperCase();
@@ -112,6 +124,20 @@ export function createSettings(container, win) {
         <div class="settings-group-label">Avatar Color</div>
         <div class="avatar-colors" id="avatarColors"></div>
       </div>
+
+      <div class="settings-group">
+  <div class="settings-group-label">Security</div>
+  <div class="settings-row">
+    <div>
+      <div class="settings-row-title">Require password on startup</div>
+      <div class="settings-row-desc">Show the lock screen every time WebOS opens</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="requirePwToggle" ${getSetting('requirePasswordOnStartup') ? 'checked' : ''}>
+      <span class="switch-slider"></span>
+    </label>
+  </div>
+</div>
 
       <div class="settings-group danger-zone">
         <div class="settings-group-label" style="color:#f87171;">Danger Zone</div>
