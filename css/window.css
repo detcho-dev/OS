@@ -195,3 +195,11 @@
   opacity: 1;
   transform: translate(-50%, 0);
 }
+
+/* اجبار أي تطبيق جوه النافذة انه ياخد المساحة كاملة */
+.window-body > * {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+}
