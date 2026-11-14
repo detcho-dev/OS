@@ -6,6 +6,7 @@ const DEFAULTS = {
   wallpaper: "auto", // 'auto' | 'jammy' | 'blue' | 'green' | 'amber' | 'dark' | 'red'
   accent: "orange", // 'orange' | 'blue' | 'green' | 'purple' | 'red' | 'pink'
   clock24h: false,
+  requirePasswordOnStartup: true,
 };
 
 let settings = { ...DEFAULTS };
