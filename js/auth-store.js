@@ -1,5 +1,5 @@
-const USER_KEY    = 'webos.user';
-const SESSION_KEY = 'webos.session';
+const USERS_KEY   = 'webos.users';
+const CURRENT_KEY = 'webos.currentUserId';
 
 /* ---------- Avatar gradients ---------- */
 export const AVATAR_GRADS = {
@@ -39,108 +39,176 @@ async function hashPassword(password, salt) {
 
 function generateSalt() {
   const arr = new Uint8Array(16);
-  if (window.crypto?.getRandomValues) {
-    crypto.getRandomValues(arr);
-  } else {
-    for (let i = 0; i < 16; i++) arr[i] = Math.floor(Math.random() * 256);
-  }
+  if (window.crypto?.getRandomValues) crypto.getRandomValues(arr);
+  else for (let i = 0; i < 16; i++) arr[i] = Math.floor(Math.random() * 256);
   return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-/* ---------- User ---------- */
-export function getUser() {
+function generateId() {
+  return 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+}
+
+/* ---------- Users array ---------- */
+export function getUsers() {
   try {
-    const s = localStorage.getItem(USER_KEY);
-    return s ? JSON.parse(s) : null;
+    const s = localStorage.getItem(USERS_KEY);
+    return s ? JSON.parse(s) : [];
+  } catch (e) { return []; }
+}
+
+function saveUsers(users) {
+  try { localStorage.setItem(USERS_KEY, JSON.stringify(users)); } catch (e) {}
+}
+
+export function getUserById(id) {
+  return getUsers().find(u => u.id === id) || null;
+}
+
+/* ---------- Current session ---------- */
+export function getCurrentUser() {
+  try {
+    const id = sessionStorage.getItem(CURRENT_KEY);
+    return id ? getUserById(id) : null;
   } catch (e) { return null; }
 }
 
-function saveUser(user) {
-  try { localStorage.setItem(USER_KEY, JSON.stringify(user)); } catch (e) {}
-  return user;
+export function setCurrentUser(userId) {
+  try { sessionStorage.setItem(CURRENT_KEY, userId); } catch (e) {}
 }
 
+export function clearCurrentUser() {
+  try { sessionStorage.removeItem(CURRENT_KEY); } catch (e) {}
+}
+
+export function hasCurrentUser() {
+  try { return !!sessionStorage.getItem(CURRENT_KEY); } catch (e) { return false; }
+}
+
+/* ---------- Legacy aliases ---------- */
+export const getUser = getCurrentUser;
+export function endSession() { clearCurrentUser(); }
+export function hasValidSession() { return hasCurrentUser(); }
+
+/* ---------- Create / verify ---------- */
 export async function createUser(username, password) {
+  if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+    return { ok: false, error: 'Username must be 3-20 chars: letters, numbers, underscore' };
+  }
+  if (password.length < 4) {
+    return { ok: false, error: 'Password must be at least 4 characters' };
+  }
+  const users = getUsers();
+  if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+    return { ok: false, error: 'Username already exists' };
+  }
   const salt = generateSalt();
   const hash = await hashPassword(password, salt);
   const user = {
+    id: generateId(),
     username,
     salt,
     hash,
     avatarColor: 'orange',
     createdAt: Date.now(),
   };
-  saveUser(user);
-  return user;
+  users.push(user);
+  saveUsers(users);
+  return { ok: true, user };
 }
 
-export async function verifyPassword(password) {
-  const user = getUser();
+export async function verifyPasswordForUser(userId, password) {
+  const user = getUserById(userId);
   if (!user) return false;
   const hash = await hashPassword(password, user.salt);
   return hash === user.hash;
 }
 
+export async function verifyPassword(password) {
+  const current = getCurrentUser();
+  if (!current) return false;
+  return verifyPasswordForUser(current.id, password);
+}
+
 /* ---------- Updates ---------- */
 export function updateUsername(newUsername) {
-  const user = getUser();
-  if (!user) return { ok: false, error: 'No user' };
+  const current = getCurrentUser();
+  if (!current) return { ok: false, error: 'No user' };
   if (!/^[a-zA-Z0-9_]{3,20}$/.test(newUsername)) {
     return { ok: false, error: 'Username must be 3-20 chars: letters, numbers, underscore' };
   }
-  user.username = newUsername;
-  saveUser(user);
+  const users = getUsers();
+  if (users.some(u => u.id !== current.id && u.username.toLowerCase() === newUsername.toLowerCase())) {
+    return { ok: false, error: 'Username already exists' };
+  }
+  const u = users.find(u => u.id === current.id);
+  u.username = newUsername;
+  saveUsers(users);
   return { ok: true };
 }
 
 export async function updatePassword(oldPassword, newPassword) {
-  const user = getUser();
-  if (!user) return { ok: false, error: 'No user' };
+  const current = getCurrentUser();
+  if (!current) return { ok: false, error: 'No user' };
   if (newPassword.length < 4) {
     return { ok: false, error: 'New password must be at least 4 characters' };
   }
-  const oldHash = await hashPassword(oldPassword, user.salt);
-  if (oldHash !== user.hash) {
+  const oldHash = await hashPassword(oldPassword, current.salt);
+  if (oldHash !== current.hash) {
     return { ok: false, error: 'Current password is incorrect' };
   }
   const newSalt = generateSalt();
   const newHash = await hashPassword(newPassword, newSalt);
-  user.salt = newSalt;
-  user.hash = newHash;
-  saveUser(user);
+  const users = getUsers();
+  const u = users.find(u => u.id === current.id);
+  u.salt = newSalt;
+  u.hash = newHash;
+  saveUsers(users);
   return { ok: true };
 }
 
 export function updateAvatarColor(color) {
-  const user = getUser();
-  if (!user) return false;
+  const current = getCurrentUser();
+  if (!current) return false;
   if (!AVATAR_GRADS[color]) return false;
-  user.avatarColor = color;
-  saveUser(user);
+  const users = getUsers();
+  const u = users.find(u => u.id === current.id);
+  u.avatarColor = color;
+  saveUsers(users);
   return true;
 }
 
 /* ---------- Delete ---------- */
+export function deleteUser(userId) {
+  const users = getUsers();
+  saveUsers(users.filter(u => u.id !== userId));
+
+  // wipe per-user data
+  Object.keys(localStorage).forEach(k => {
+    if (k.endsWith('.' + userId)) localStorage.removeItem(k);
+  });
+
+  // clear session if this was current
+  try {
+    if (sessionStorage.getItem(CURRENT_KEY) === userId) {
+      sessionStorage.removeItem(CURRENT_KEY);
+    }
+  } catch (e) {}
+  return true;
+}
+
 export function deleteAccount() {
+  const current = getCurrentUser();
+  if (current) deleteUser(current.id);
+}
+
+export function deleteAllData() {
   Object.keys(localStorage).forEach(k => {
     if (k.startsWith('webos.')) localStorage.removeItem(k);
   });
   try { sessionStorage.clear(); } catch (e) {}
 }
 
-/* ---------- Session ---------- */
-export function createSession() {
-  try { sessionStorage.setItem(SESSION_KEY, '1'); } catch (e) {}
-}
-
-export function hasValidSession() {
-  try { return sessionStorage.getItem(SESSION_KEY) === '1'; } catch (e) { return false; }
-}
-
-export function endSession() {
-  try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
-}
-
+/* ---------- Storage check ---------- */
 export function isStorageAvailable() {
   try {
     localStorage.setItem('__t', '1');
