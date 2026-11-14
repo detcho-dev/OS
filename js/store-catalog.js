@@ -186,4 +186,17 @@ export const CATALOG = [
     version: "0.0.0",
     size: "—",
   },
+  { id: 'codestudio', builtin: false, category: 'Development', featured: true,
+  name: 'Code Studio', icon: SVG.codestudio,
+  tint: 'linear-gradient(135deg, #a855f7, #7c3aed)',
+  desc: 'HTML, CSS & JS editor with live preview',
+  longDesc: 'A full code editor with HTML, CSS, and JS tabs, live preview, and instant testing. Save projects to your virtual file system and open them in the Browser.',
+  developer: 'WebOS', version: '1.0.0', size: '800 KB' },
+
+{ id: 'browser', builtin: false, category: 'Internet', featured: true,
+  name: 'Browser', icon: SVG.browser,
+  tint: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+  desc: 'View websites you build',
+  longDesc: 'A browser that opens HTML files from your virtual file system and (when possible) external websites. Bookmarks, history, back/forward navigation.',
+  developer: 'WebOS', version: '1.0.0', size: '600 KB' },
 ];
