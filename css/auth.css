@@ -401,3 +401,17 @@
   color: rgba(255, 255, 255, 0.55);
   margin-top: 8px;
 }
+
+.lock-forgot {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 6px 12px;
+  margin-top: 8px;
+  text-decoration: underline;
+  transition: color 120ms;
+}
+.lock-forgot:hover { color: #e95420; }
