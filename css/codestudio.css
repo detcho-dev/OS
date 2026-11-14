@@ -69,6 +69,7 @@
   flex: 1;
   display: flex;
   min-height: 0;
+  width: 100%;       /* ← أضف السطر ده */
 }
 
 .cs-editor-pane {
@@ -76,6 +77,17 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  width: 50%;        /* ← خليه 50% عشان يتقسم مع الـ preview */
+}
+
+.cs-preview-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #2a2a2e;
+  min-width: 0;
+  width: 50%;        /* ← أضف السطر ده */
+  background: #1e1e20;
 }
 
 .cs-editor-wrap {
@@ -122,14 +134,7 @@
 .cs-editor::-webkit-scrollbar-thumb:hover { background: #444; }
 
 /* ============ Preview Pane ============ */
-.cs-preview-pane {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid #2a2a2e;
-  min-width: 0;
-  background: #1e1e20;
-}
+
 
 .cs-preview-header {
   display: flex;
