@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebOS</title>
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/desktop.css" />
+    <link rel="stylesheet" href="css/topbar.css" />
+    <link rel="stylesheet" href="css/dock.css" />
+    <link rel="stylesheet" href="css/appgrid.css" />
+    <link rel="stylesheet" href="css/window.css" />
+    <link rel="stylesheet" href="css/terminal.css" />
+    <link rel="stylesheet" href="css/files.css" />
+    <link rel="stylesheet" href="css/editor.css" />
+    <link rel="stylesheet" href="css/context-menu.css" />
+    <link rel="stylesheet" href="css/notes.css" />
+    <link rel="stylesheet" href="css/settings.css" />
+    <link rel="stylesheet" href="css/palette.css" />
+    <link rel="stylesheet" href="css/notifications.css" />
+    <link rel="stylesheet" href="css/store.css" />
+    <link rel="stylesheet" href="css/calculator.css" />
+    <link rel="stylesheet" href="css/clock.css" />
+    <link rel="stylesheet" href="css/snake.css" />
+    <link rel="stylesheet" href="css/statusbar.css" />
+    <link rel="stylesheet" href="css/statusbar.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+  </head>
+  <body>
+    <!-- Top Bar -->
+    <div id="topbar">
+      <div class="tb-left">
+        <button id="activitiesBtn">Activities</button>
+      </div>
+      <div class="tb-center">
+        <span id="topbarApp">WebOS</span>
+      </div>
+      <div class="tb-right">
+        <div class="topbar-indicators" id="topbarIndicators"></div>
+        <div id="topbarClock"></div>
+      </div>
+    </div>
+
+    <!-- Dock -->
+    <aside id="dock">
+      <div id="dockApps"></div>
+      <div class="dock-divider"></div>
+      <div class="dock-actions" id="dockActions"></div>
+      <div id="workspaces">
+        <span class="ws-dot active" data-ws="0" title="Workspace 1"></span>
+        <span class="ws-dot" data-ws="1" title="Workspace 2"></span>
+        <span class="ws-dot" data-ws="2" title="Workspace 3"></span>
+        <span class="ws-dot" data-ws="3" title="Workspace 4"></span>
+      </div>
+    </aside>
+
+    <!-- Desktop -->
+    <div id="desktop"></div>
+
+    <!-- App Grid -->
+    <div id="appGrid">
+      <div class="app-grid-search">
+        <input
+          id="appSearch"
+          type="text"
+          placeholder="Type to search…"
+          autocomplete="off"
+        />
+      </div>
+      <div class="app-grid-items" id="appGridItems"></div>
+    </div>
+
+    <!-- Windows -->
+    <div id="windowsLayer"></div>
+
+    <!-- Toast -->
+    <div id="toast"></div>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
