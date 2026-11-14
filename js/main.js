@@ -4,30 +4,35 @@ import { applyWorkspaceWallpaper, updateWorkspaceUI } from './workspaces.js';
 import { loadSettings, applyAccent, onChange, getSetting } from './settings-store.js';
 import { loadInstalledApps } from './store-registry.js';
 import { togglePalette } from './palette.js';
-import { getUser, isStorageAvailable } from './auth-store.js';
+import { getUsers, hasCurrentUser, isStorageAvailable } from './auth-store.js';
 
 async function bootstrap() {
+  /* ===== Auth Gate ===== */
+  if (isStorageAvailable()) {
+    const users = getUsers();
+    const hasSession = hasCurrentUser();
+
+    if (users.length === 0) {
+      const { showSetupScreen } = await import('./auth.js');
+      await showSetupScreen();
+    } else if (!hasSession) {
+      const { showUserPicker } = await import('./auth.js');
+      await showUserPicker();
+    } else {
+      loadSettings();
+      if (getSetting('requirePasswordOnStartup')) {
+        const { showLockScreenAuth } = await import('./auth.js');
+        await showLockScreenAuth();
+      }
+    }
+  }
+
+  /* ===== Now load user-specific data ===== */
   loadSettings();
   applyAccent();
   loadInstalledApps();
 
-  /* ===== Auth Gate ===== */
-  if (isStorageAvailable()) {
-    const user = getUser();
-
-    if (!user) {
-      // First time → setup + auto-enter
-      const { showSetupScreen } = await import('./auth.js');
-      await showSetupScreen();
-    } else if (getSetting('requirePasswordOnStartup')) {
-      // Returning → lock screen (OS-like boot)
-      const { showLockScreenAuth } = await import('./auth.js');
-      await showLockScreenAuth();
-    }
-    // else: auto-enter (user chose to skip)
-  }
-
-  /* ===== Init Desktop ===== */
+  /* ===== Init UI ===== */
   onChange('wallpaper', applyWorkspaceWallpaper);
   renderDock();
   renderTopbarIndicators();
@@ -36,7 +41,7 @@ async function bootstrap() {
   updateWorkspaceUI();
   updateTopbar();
 
-  /* ===== Keyboard Shortcuts ===== */
+  /* ===== Keyboard shortcuts ===== */
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && (e.code === 'Space' || e.key === 'k' || e.key === 'K')) {
       e.preventDefault();
