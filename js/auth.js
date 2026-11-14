@@ -268,7 +268,7 @@ export function showLockScreenAuth() {
             placeholder="Password" autofocus />
           <button type="submit" class="lock-unlock-btn" id="lockBtn">Unlock</button>
         </form>
-        <div class="lock-hint">Press F5 to force quit (data is preserved)</div>
+        <button type="button" class="lock-forgot" id="lockForgot">Forgot your password?</button>
       </div>
     `;
     document.body.appendChild(el);
@@ -277,6 +277,7 @@ export function showLockScreenAuth() {
     const $form     = el.querySelector('#lockForm');
     const $password = el.querySelector('#lockPassword');
     const $btn      = el.querySelector('#lockBtn');
+    const $forgot = el.querySelector('#lockForgot');
 
     const updateTime = () => {
       if (!document.body.contains(el)) return;
@@ -316,5 +317,25 @@ export function showLockScreenAuth() {
     });
 
     setTimeout(() => $password.focus(), 120);
+
+    $forgot.addEventListener('click', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  const { showConfirm } = await import('./notifications.js');
+  const ok = await showConfirm(
+    'Reset Account',
+    'This will permanently delete your account and ALL data:\n' +
+    '• Files and notes\n' +
+    '• Installed apps\n' +
+    '• Settings\n' +
+    '• Your account\n\n' +
+    'You will need to create a new account.',
+    { danger: true, okText: 'Reset Everything', cancelText: 'Cancel' }
+  );
+  if (!ok) return;
+  const { deleteAccount } = await import('./auth-store.js');
+  deleteAccount();
+  location.reload();
+});
   });
 }
