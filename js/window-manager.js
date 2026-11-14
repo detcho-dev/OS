@@ -10,6 +10,8 @@ import { createStore } from "./store.js";
 import { createCalculator } from "./calculator.js";
 import { createClock } from "./clock.js";
 import { createSnake } from "./snake.js";
+import { createCodeStudio } from './codestudio.js';
+import { createBrowser }    from './browser.js';
 
 const windowsLayer = document.getElementById("windowsLayer");
 
@@ -18,7 +20,7 @@ let zIndexCounter = 100;
 let focusedInstanceId = null;
 let instanceCounter = 0;
 
-const SINGLETON_APPS = ["terminal", "files", "settings", "notes", "store"];
+const SINGLETON_APPS = ['terminal', 'files', 'settings', 'notes', 'store', 'browser'];
 const MIN_WIDTH = 320;
 const MIN_HEIGHT = 220;
 
@@ -349,39 +351,23 @@ function setupResize(winEl, handleEl, direction) {
    ============================================================ */
 function mountApp(appId, body, win, options) {
   switch (appId) {
-    case "terminal":
-      createTerminal(body, win, options);
-      break;
-    case "files":
-      createFiles(body, win);
-      break;
-    case "editor":
-      createEditor(body, win, options);
-      break;
-    case "notes":
-      createNotes(body, win);
-      break;
-    case "settings":
-      createSettings(body, win);
-      break;
-    case "store":
-      createStore(body, win);
-      break;
-    case "calculator":
-      createCalculator(body, win);
-      break;
-    case "clock":
-      createClock(body, win);
-      break;
-    case "snake":
-      createSnake(body, win);
-      break;
+    case 'terminal':    createTerminal(body, win, options);    break;
+    case 'files':       createFiles(body, win);                break;
+    case 'editor':      createEditor(body, win, options);      break;
+    case 'notes':       createNotes(body, win);                break;
+    case 'settings':    createSettings(body, win);             break;
+    case 'store':       createStore(body, win);                break;
+    case 'calculator':  createCalculator(body, win);           break;
+    case 'clock':       createClock(body, win);                break;
+    case 'snake':       createSnake(body, win);                break;
+    case 'codestudio':  createCodeStudio(body, win, options);  break;
+    case 'browser':     createBrowser(body, win, options);     break;
     default:
       body.innerHTML = `
-          <div class="coming-soon">
-            <div class="big">${APPS[appId].icon}</div>
-            <div>${APPS[appId].name} — Coming soon</div>
-          </div>
-        `;
+        <div class="coming-soon">
+          <div class="big">${APPS[appId].icon}</div>
+          <div>${APPS[appId].name} — Coming soon</div>
+        </div>
+      `;
   }
 }
