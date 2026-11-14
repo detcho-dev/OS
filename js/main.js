@@ -3,10 +3,13 @@ import { renderTopbarIndicators, startClock, updateTopbar } from './topbar.js';
 import { applyWorkspaceWallpaper, updateWorkspaceUI } from './workspaces.js';
 import { loadSettings, applyAccent, onChange, getSetting } from './settings-store.js';
 import { loadInstalledApps } from './store-registry.js';
+import { loadUserFS } from './vfs.js';
 import { togglePalette } from './palette.js';
 import { getUsers, hasCurrentUser, isStorageAvailable } from './auth-store.js';
 
 async function bootstrap() {
+  let justAuthenticated = false;
+
   /* ===== Auth Gate ===== */
   if (isStorageAvailable()) {
     const users = getUsers();
@@ -15,24 +18,28 @@ async function bootstrap() {
     if (users.length === 0) {
       const { showSetupScreen } = await import('./auth.js');
       await showSetupScreen();
+      justAuthenticated = true;
     } else if (!hasSession) {
       const { showUserPicker } = await import('./auth.js');
       await showUserPicker();
-    } else {
-      loadSettings();
-      if (getSetting('requirePasswordOnStartup')) {
-        const { showLockScreenAuth } = await import('./auth.js');
-        await showLockScreenAuth();
-      }
+      justAuthenticated = true;
     }
   }
 
-  /* ===== Now load user-specific data ===== */
+  /* ===== Load user-specific data (AFTER auth) ===== */
   loadSettings();
   applyAccent();
   loadInstalledApps();
+  loadUserFS();
 
-  /* ===== Init UI ===== */
+  /* ===== Lock screen on boot (returning session only) ===== */
+  if (!justAuthenticated && isStorageAvailable() && hasCurrentUser()
+      && getSetting('requirePasswordOnStartup')) {
+    const { showLockScreenAuth } = await import('./auth.js');
+    await showLockScreenAuth();
+  }
+
+  /* ===== Init Desktop ===== */
   onChange('wallpaper', applyWorkspaceWallpaper);
   renderDock();
   renderTopbarIndicators();
@@ -41,7 +48,7 @@ async function bootstrap() {
   updateWorkspaceUI();
   updateTopbar();
 
-  /* ===== Keyboard shortcuts ===== */
+  /* ===== Keyboard Shortcuts ===== */
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && (e.code === 'Space' || e.key === 'k' || e.key === 'K')) {
       e.preventDefault();
