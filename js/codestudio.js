@@ -86,9 +86,12 @@ export function createCodeStudio(container, win, options = {}) {
         </div>
         <div class="cs-preview-pane">
           <div class="cs-preview-header">
-            <span>Preview</span>
-            <button class="cs-btn small" data-action="refresh-preview">Refresh</button>
-          </div>
+  <span>Preview</span>
+  <div style="display: flex; gap: 6px;">
+    <button class="cs-btn small primary" data-action="open-browser">Open in Browser</button>
+    <button class="cs-btn small" data-action="refresh-preview">Refresh</button>
+  </div>
+</div>
           <iframe class="cs-preview-iframe" id="csPreview"
             sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"></iframe>
         </div>
