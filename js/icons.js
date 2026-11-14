@@ -97,4 +97,15 @@ export const SVG = {
   <circle cx="14" cy="34" r="4"/>
   <circle cx="32" cy="30" r="4"/>
 </svg>`,
+  codestudio: `<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M16 16 L8 24 L16 32"/>
+  <path d="M32 16 L40 24 L32 32"/>
+  <path d="M28 12 L20 36"/>
+</svg>`,
+
+browser: `<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round">
+  <circle cx="24" cy="24" r="18"/>
+  <ellipse cx="24" cy="24" rx="8" ry="18"/>
+  <line x1="6" y1="24" x2="42" y2="24"/>
+</svg>`,
 };
