@@ -1,0 +1,78 @@
+#topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 1000;
+  font-size: 12px;
+}
+
+#topbar .tb-left,
+#topbar .tb-center,
+#topbar .tb-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+#topbar .tb-center {
+  justify-content: center;
+  flex: 2;
+}
+#topbar .tb-right {
+  justify-content: flex-end;
+}
+
+#activitiesBtn {
+  height: 22px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 120ms;
+}
+#activitiesBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+#topbarApp {
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.topbar-indicators {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.topbar-indicators span {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.9;
+  cursor: pointer;
+}
+.topbar-indicators svg {
+  display: block;
+}
+
+#topbarClock {
+  font-weight: 500;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+#topbarClock:hover {
+  background: rgba(255, 255, 255, 0.08);
+}

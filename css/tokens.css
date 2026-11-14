@@ -1,0 +1,9 @@
+:root {
+  --topbar-h: 28px;
+  --dock-w: 68px;
+  --accent: #e95420;
+  --accent-soft: rgba(233, 84, 32, 0.22);
+  --text: #eceae6;
+  --text-dim: #a29b94;
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6);
+}

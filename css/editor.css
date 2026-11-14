@@ -1,0 +1,89 @@
+.editor-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #1e1e1e;
+  direction: ltr;
+}
+
+.editor-toolbar {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 8px;
+  background: #2a2a2e;
+  border-bottom: 1px solid #1a1a1a;
+  flex-shrink: 0;
+}
+
+.editor-path {
+  flex: 1;
+  color: #888;
+  font-size: 11.5px;
+  font-family: "Consolas", "Menlo", monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editor-btn {
+  padding: 4px 14px;
+  border: none;
+  background: #3a3a40;
+  color: #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 100ms;
+}
+.editor-btn:hover {
+  background: #4a4a50;
+}
+.editor-btn.primary {
+  background: #e95420;
+  color: #fff;
+}
+.editor-btn.primary:hover {
+  background: #f06430;
+}
+
+.editor-textarea {
+  flex: 1;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border: none;
+  outline: none;
+  padding: 16px;
+  font-family: "Consolas", "Menlo", monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: none;
+  tab-size: 2;
+  direction: ltr;
+  text-align: left;
+}
+.editor-textarea::-webkit-scrollbar {
+  width: 10px;
+}
+.editor-textarea::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+.editor-status {
+  height: 22px;
+  padding: 0 12px;
+  background: #2a2a2e;
+  border-top: 1px solid #1a1a1a;
+  font-size: 11px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.editor-status .dirty {
+  color: #e95420;
+}

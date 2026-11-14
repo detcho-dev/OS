@@ -1,0 +1,548 @@
+/* ============ Status Widgets (Top Bar) ============ */
+.status-widgets {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-right: 4px;
+}
+
+.status-widget {
+  height: 22px;
+  min-width: 22px;
+  padding: 0 6px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms;
+}
+.status-widget:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.status-widget:active {
+  background: rgba(255, 255, 255, 0.18);
+}
+.status-widget svg {
+  display: block;
+}
+
+/* ============ Quick Settings Panel ============ */
+#quickSettings {
+  position: fixed;
+  top: calc(var(--topbar-h) + 6px);
+  right: 8px;
+  width: 340px;
+  max-height: calc(100vh - var(--topbar-h) - 20px);
+  background: rgba(28, 26, 32, 0.97);
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  z-index: 2100;
+  padding: 16px;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  transform-origin: top right;
+  pointer-events: none;
+  transition: opacity 160ms, transform 160ms;
+  color: #e8e8e8;
+  font-size: 13px;
+  overflow-y: auto;
+  direction: ltr;
+}
+#quickSettings.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+#quickSettings::-webkit-scrollbar {
+  width: 8px;
+}
+#quickSettings::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+.qs-section {
+  margin-bottom: 16px;
+}
+.qs-section:last-child {
+  margin-bottom: 0;
+}
+
+.qs-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #888;
+  letter-spacing: 0.6px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Volume & Brightness */
+.qs-volume-row,
+.qs-brightness-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qs-volume-icon {
+  width: 22px;
+  height: 22px;
+  color: #c8c8cc;
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 120ms;
+}
+.qs-volume-icon.muted {
+  color: #f87171;
+}
+
+.qs-brightness-row > svg {
+  width: 20px;
+  height: 20px;
+  color: #c8c8cc;
+  flex-shrink: 0;
+}
+
+.qs-slider {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.qs-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.qs-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.qs-value {
+  font-family: "Consolas", monospace;
+  font-size: 11px;
+  color: #888;
+  min-width: 34px;
+  text-align: right;
+}
+
+/* WiFi */
+.qs-wifi-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 100ms;
+}
+.qs-wifi-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.qs-wifi-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.qs-wifi-toggle-label svg {
+  display: block;
+}
+
+.qs-switch {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  background: #444;
+  border-radius: 10px;
+  transition: background 200ms;
+  flex-shrink: 0;
+}
+.qs-switch.on {
+  background: var(--accent);
+}
+.qs-switch::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: left 200ms;
+}
+.qs-switch.on::after {
+  left: 17px;
+}
+
+.qs-networks {
+  max-height: 200px;
+  overflow-y: auto;
+  transition: opacity 200ms;
+}
+.qs-networks.off {
+  opacity: 0.35;
+  pointer-events: none;
+}
+.qs-networks::-webkit-scrollbar {
+  width: 4px;
+}
+.qs-networks::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 2px;
+}
+
+.qs-network {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 100ms;
+}
+.qs-network:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.qs-network.active {
+  color: var(--accent);
+}
+
+.qs-network-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qs-network-icon svg {
+  display: block;
+}
+.qs-network-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.qs-network-lock {
+  width: 12px;
+  height: 12px;
+  color: #888;
+  flex-shrink: 0;
+}
+
+/* Battery */
+.qs-battery {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+.qs-battery > svg {
+  flex-shrink: 0;
+}
+.qs-battery-info {
+  flex: 1;
+}
+.qs-battery-pct {
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+}
+.qs-battery-sub {
+  font-size: 11px;
+  color: #888;
+  margin-top: 2px;
+}
+
+/* Power Grid */
+.qs-power-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.qs-power-btn {
+  padding: 12px 6px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e8e8e8;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: background 100ms;
+}
+.qs-power-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.qs-power-btn.danger {
+  color: #f87171;
+}
+.qs-power-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+.qs-power-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ============ Brightness Overlay ============ */
+#brightnessOverlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+  z-index: 9998;
+  transition: opacity 120ms;
+  opacity: 0;
+}
+
+/* ============ Lock Screen ============ */
+#lockScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background: radial-gradient(
+      1200px 800px at 30% 20%,
+      rgba(233, 84, 32, 0.4),
+      transparent 60%
+    ),
+    radial-gradient(
+      1000px 700px at 70% 80%,
+      rgba(119, 41, 83, 0.6),
+      transparent 60%
+    ),
+    linear-gradient(135deg, #1a0d15, #2c001e);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms;
+  direction: ltr;
+  color: #fff;
+  cursor: pointer;
+}
+#lockScreen.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lock-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: lockSlideUp 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes lockSlideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.lock-time {
+  font-family: "Consolas", monospace;
+  font-size: 96px;
+  font-weight: 300;
+  letter-spacing: -3px;
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.5);
+  line-height: 1;
+}
+
+.lock-date {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 30px;
+}
+
+.lock-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e95420, #a13a15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5),
+    inset 0 2px 0 rgba(255, 255, 255, 0.15);
+}
+.lock-avatar svg {
+  width: 44px;
+  height: 44px;
+}
+
+.lock-user {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.lock-hint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 8px;
+}
+
+.lock-unlock-btn {
+  margin-top: 12px;
+  padding: 10px 32px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 150ms;
+}
+.lock-unlock-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ============ Suspend Screen ============ */
+#suspendScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 4900;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms;
+  color: #333;
+  font-size: 13px;
+  direction: ltr;
+  cursor: pointer;
+}
+#suspendScreen.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+#suspendScreen > div {
+  animation: suspendPulse 2s ease-in-out infinite;
+}
+@keyframes suspendPulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ============ Shutdown Screen ============ */
+#shutdownScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 5100;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms;
+  color: #666;
+  direction: ltr;
+}
+#shutdownScreen.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.shutdown-icon {
+  width: 60px;
+  height: 60px;
+  color: #2a2a2a;
+}
+
+.shutdown-text {
+  font-size: 14px;
+  color: #444;
+  font-family: "Consolas", monospace;
+  letter-spacing: 1px;
+}
+
+.shutdown-power-btn {
+  margin-top: 30px;
+  padding: 12px 24px;
+  background: rgba(233, 84, 32, 0.15);
+  border: 1px solid rgba(233, 84, 32, 0.35);
+  border-radius: 8px;
+  color: #e95420;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 150ms;
+}
+.shutdown-power-btn:hover {
+  background: rgba(233, 84, 32, 0.25);
+}
+.shutdown-power-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ============ Restart Fade ============ */
+.restart-fade {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: auto;
+  transition: opacity 400ms;
+}
