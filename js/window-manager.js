@@ -199,6 +199,16 @@ export function toggleMaximize(instanceId) {
     win.maximized = true;
   }
 }
+function checkDockVisibility() {
+  let anyMaximized = false;
+  for (const w of openWindows.values()) {
+    if (w.maximized && !w.minimized) {
+      anyMaximized = true;
+      break;
+    }
+  }
+  document.body.classList.toggle('dock-hidden', anyMaximized);
+}
 
 /* ============================================================
    Drag
