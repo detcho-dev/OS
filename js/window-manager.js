@@ -198,6 +198,7 @@ export function toggleMaximize(instanceId) {
     });
     win.maximized = true;
   }
+  checkDockVisibility();
 }
 function checkDockVisibility() {
   let anyMaximized = false;
