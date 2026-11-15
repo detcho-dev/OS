@@ -77,7 +77,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  width: 50%;        /* ← خليه 50% عشان يتقسم مع الـ preview */
+  width: 50%;
 }
 
 .cs-preview-pane {
@@ -93,11 +93,10 @@
 .cs-editor-wrap {
   flex: 1;
   display: flex;
-  overflow: hidden;
   background: #1a1a1d;
   position: relative;
+  overflow: hidden;
 }
-
 .cs-line-numbers {
   width: 44px;
   padding: 12px 8px 12px 0;
@@ -112,26 +111,59 @@
   user-select: none;
   pointer-events: none;
   border-right: 1px solid #252528;
+  z-index: 3;
 }
 
 .cs-editor {
-  flex: 1;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
   padding: 12px 16px;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #d4d4d4;
   font-family: 'Consolas', 'Menlo', monospace;
   font-size: 13px;
   line-height: 1.55;
+  background: transparent;
+  color: transparent; /* النص شفاف */
+  caret-color: #fff; /* المؤشر بس هو اللي ظاهر */
+  border: none;
+  outline: none;
   resize: none;
+  white-space: pre;
   overflow: auto;
   tab-size: 2;
-  white-space: pre;
+  z-index: 2;
 }
+.cs-highlight-layer {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  padding: 12px 16px;
+  font-family: 'Consolas', 'Menlo', monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre;
+  pointer-events: none;
+  color: #d4d4d4;
+  overflow: hidden;
+  tab-size: 2;
+  z-index: 1;
+}
+
+.cs-editor-inner {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
 .cs-editor::-webkit-scrollbar { width: 10px; height: 10px; }
 .cs-editor::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 .cs-editor::-webkit-scrollbar-thumb:hover { background: #444; }
+
+.hl-tag    { color: #569cd6; }
+.hl-attr   { color: #9cdcfe; }
+.hl-string { color: #ce9178; }
+.hl-keyword{ color: #c586c0; }
+.hl-comment{ color: #6a9955; }
+.hl-number { color: #b5cea8; }
+.hl-func   { color: #dcdcaa; }
 
 /* ============ Preview Pane ============ */
 
