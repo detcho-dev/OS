@@ -2,9 +2,9 @@ import { getNode, saveFS } from './vfs.js';
 import { createWindow } from './window-manager.js';
 import { toast, showPrompt, showConfirm } from './notifications.js';
 
-const DEFAULT_HTML = '<h1>Hello, World!</h1>\n<p>Edit this code and watch the preview.</p>\n<button onclick="sayHi()">Click me</button>';
-const DEFAULT_CSS  = 'body {\n  font-family: system-ui, sans-serif;\n  padding: 24px;\n  background: #f8f8f8;\n  color: #333;\n  text-align: center;\n}\n\nh1 {\n  color: #e95420;\n}\n\nbutton {\n  padding: 8px 16px;\n  font-size: 14px;\n  cursor: pointer;\n}';
-const DEFAULT_JS   = 'function sayHi() {\n  alert("Hello from JS!");\n  console.log("Button clicked");\n}';
+const DEFAULT_HTML = '';
+const DEFAULT_CSS  = '';
+const DEFAULT_JS   = '';
 
 function ensureWebsitesDir() {
   const home = getNode(['home', 'user']);
@@ -29,6 +29,40 @@ ${p.html}
 <script>${p.js}<\/script>
 </body>
 </html>`;
+}
+
+/* ============================================================
+   دالة تلوين الأكواد (Syntax Highlighting)
+   ============================================================ */
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function highlightCode(code, lang) {
+  let html = escapeHtml(code);
+
+  if (lang === 'html') {
+    html = html.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="hl-comment">$1</span>');
+    html = html.replace(/(&lt;\/?)([a-zA-Z0-9-]+)/g, '$1<span class="hl-tag">$2</span>');
+    html = html.replace(/([a-zA-Z-]+)=/g, '<span class="hl-attr">$1</span>=');
+    html = html.replace(/("[^"]*")/g, '<span class="hl-string">$1</span>');
+  } else if (lang === 'css') {
+    html = html.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="hl-comment">$1</span>');
+    html = html.replace(/^([^{]+)(?=\{)/gm, '<span class="hl-tag">$1</span>');
+    html = html.replace(/([a-zA-Z-]+)(\s*:)/g, '<span class="hl-attr">$1</span>$2');
+    html = html.replace(/(\b\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw|s|ms)?\b)/g, '<span class="hl-number">$1</span>');
+  } else if (lang === 'js') {
+    html = html.replace(/(\/\/.*|\/\*[\s\S]*?\*\/)/g, '<span class="hl-comment">$1</span>');
+    html = html.replace(/("[^"]*"|'[^']*'|`[^`]*`)/g, '<span class="hl-string">$1</span>');
+    html = html.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|new|this|async|await|try|catch|throw|typeof)\b/g, '<span class="hl-keyword">$1</span>');
+    html = html.replace(/\b(\d+)\b/g, '<span class="hl-number">$1</span>');
+    html = html.replace(/\b([a-zA-Z_]\w*)(?=\()/g, '<span class="hl-func">$1</span>');
+  }
+
+  return html + '\n';
 }
 
 export function createCodeStudio(container, win, options = {}) {
@@ -70,7 +104,6 @@ export function createCodeStudio(container, win, options = {}) {
         <button class="cs-btn" data-action="save">Save</button>
         <button class="cs-btn" data-action="save-as">Save As</button>
         <div class="cs-spacer"></div>
-        <button class="cs-btn primary" data-action="open-browser">Open in Browser</button>
       </div>
       <div class="cs-tabs">
         <button class="cs-tab active" data-tab="html">HTML</button>
@@ -81,17 +114,20 @@ export function createCodeStudio(container, win, options = {}) {
         <div class="cs-editor-pane">
           <div class="cs-editor-wrap">
             <div class="cs-line-numbers" id="csLineNumbers"></div>
-            <textarea class="cs-editor" id="csEditor" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
+            <div class="cs-editor-inner">
+              <pre class="cs-highlight-layer" id="csHighlight" aria-hidden="true"></pre>
+              <textarea class="cs-editor" id="csEditor" spellcheck="false" autocapitalize="off" autocorrect="off"></textarea>
+            </div>
           </div>
         </div>
         <div class="cs-preview-pane">
           <div class="cs-preview-header">
-  <span>Preview</span>
-  <div style="display: flex; gap: 6px;">
-    <button class="cs-btn small primary" data-action="open-browser">Open in Browser</button>
-    <button class="cs-btn small" data-action="refresh-preview">Refresh</button>
-  </div>
-</div>
+            <span>Preview</span>
+            <div style="display: flex; gap: 6px;">
+              <button class="cs-btn small primary" data-action="open-browser">Open in Browser</button>
+              <button class="cs-btn small" data-action="refresh-preview">Refresh</button>
+            </div>
+          </div>
           <iframe class="cs-preview-iframe" id="csPreview"
             sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"></iframe>
         </div>
@@ -105,6 +141,7 @@ export function createCodeStudio(container, win, options = {}) {
   `;
 
   const $editor       = container.querySelector('#csEditor');
+  const $highlight    = container.querySelector('#csHighlight');
   const $lineNumbers  = container.querySelector('#csLineNumbers');
   const $preview      = container.querySelector('#csPreview');
   const $statusFile   = container.querySelector('#csStatusFile');
@@ -114,8 +151,14 @@ export function createCodeStudio(container, win, options = {}) {
   /* ---------- Editor sync ---------- */
   function updateEditor() {
     $editor.value = project[project.currentTab] || '';
+    updateHighlight();
     updateLineNumbers();
     updateStatus();
+    syncScroll();
+  }
+
+  function updateHighlight() {
+    $highlight.innerHTML = highlightCode($editor.value, project.currentTab);
   }
 
   function updateLineNumbers() {
@@ -123,6 +166,12 @@ export function createCodeStudio(container, win, options = {}) {
     const arr = [];
     for (let i = 1; i <= lines; i++) arr.push(i);
     $lineNumbers.innerHTML = arr.join('<br>');
+  }
+
+  function syncScroll() {
+    $lineNumbers.scrollTop = $editor.scrollTop;
+    $highlight.scrollTop = $editor.scrollTop;
+    $highlight.scrollLeft = $editor.scrollLeft;
   }
 
   function updateStatus() {
@@ -146,14 +195,13 @@ export function createCodeStudio(container, win, options = {}) {
   $editor.addEventListener('input', () => {
     project[project.currentTab] = $editor.value;
     isDirty = true;
+    updateHighlight();
     updateLineNumbers();
     updateStatus();
     schedulePreview();
   });
 
-  $editor.addEventListener('scroll', () => {
-    $lineNumbers.scrollTop = $editor.scrollTop;
-  });
+  $editor.addEventListener('scroll', syncScroll);
 
   $editor.addEventListener('keydown', (e) => {
     // Tab = 2 spaces
@@ -166,6 +214,7 @@ export function createCodeStudio(container, win, options = {}) {
       $editor.selectionStart = $editor.selectionEnd = start + 2;
       project[project.currentTab] = $editor.value;
       isDirty = true;
+      updateHighlight();
       updateLineNumbers();
       updateStatus();
       schedulePreview();
@@ -182,9 +231,7 @@ export function createCodeStudio(container, win, options = {}) {
   /* ---------- Tabs ---------- */
   container.querySelectorAll('.cs-tab').forEach(btn => {
     btn.addEventListener('click', () => {
-      // save current tab content
       project[project.currentTab] = $editor.value;
-      // switch
       project.currentTab = btn.dataset.tab;
       container.querySelectorAll('.cs-tab').forEach(b =>
         b.classList.toggle('active', b === btn));
