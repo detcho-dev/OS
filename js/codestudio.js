@@ -41,28 +41,21 @@ function escapeHtml(unsafe) {
     .replace(/>/g, "&gt;");
 }
 
+/* ============================================================
+   دالة تلوين الأكواد باستخدام Prism.js
+   ============================================================ */
 function highlightCode(code, lang) {
-  let html = escapeHtml(code);
-
-  if (lang === 'html') {
-    html = html.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="hl-comment">$1</span>');
-    html = html.replace(/(&lt;\/?)([a-zA-Z0-9-]+)/g, '$1<span class="hl-tag">$2</span>');
-    html = html.replace(/([a-zA-Z-]+)=/g, '<span class="hl-attr">$1</span>=');
-    html = html.replace(/("[^"]*")/g, '<span class="hl-string">$1</span>');
-  } else if (lang === 'css') {
-    html = html.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="hl-comment">$1</span>');
-    html = html.replace(/^([^{]+)(?=\{)/gm, '<span class="hl-tag">$1</span>');
-    html = html.replace(/([a-zA-Z-]+)(\s*:)/g, '<span class="hl-attr">$1</span>$2');
-    html = html.replace(/(\b\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw|s|ms)?\b)/g, '<span class="hl-number">$1</span>');
-  } else if (lang === 'js') {
-    html = html.replace(/(\/\/.*|\/\*[\s\S]*?\*\/)/g, '<span class="hl-comment">$1</span>');
-    html = html.replace(/("[^"]*"|'[^']*'|`[^`]*`)/g, '<span class="hl-string">$1</span>');
-    html = html.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|new|this|async|await|try|catch|throw|typeof)\b/g, '<span class="hl-keyword">$1</span>');
-    html = html.replace(/\b(\d+)\b/g, '<span class="hl-number">$1</span>');
-    html = html.replace(/\b([a-zA-Z_]\w*)(?=\()/g, '<span class="hl-func">$1</span>');
+  if (typeof Prism === 'undefined') {
+    // Fallback في حالة إن الإنترنت قطع ومكتبة Prism محملتش
+    return code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + '\n';
   }
 
-  return html + '\n';
+  let grammar = Prism.languages.markup;
+  if (lang === 'css') grammar = Prism.languages.css;
+  if (lang === 'js')  grammar = Prism.languages.javascript;
+
+  // Prism بيهرب الأكواد ويحط الألوان أوتوماتيك
+  return Prism.highlight(code, grammar, lang) + '\n';
 }
 
 export function createCodeStudio(container, win, options = {}) {
