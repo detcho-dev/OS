@@ -208,3 +208,15 @@
 .cs-status-file { color: #c8c8cc; }
 .cs-status-dirty { color: #e95420; }
 .cs-status-info { margin-left: auto; }
+
+/* تصفير خلفية Prism عشان تاخد خلفية الـ Code Studio */
+.cs-highlight-layer code[class*="language-"],
+.cs-highlight-layer pre[class*="language-"] {
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+  text-shadow: none !important;
+}
